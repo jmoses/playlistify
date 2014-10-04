@@ -26,6 +26,7 @@ Dir['*'].each do |artist|
 end
 
 data.each do |album, artists|
+  album = album[0..30].gsub(/(\[\])/, '')
   if artists.size == 1
     File.open("#{artists.keys.first} - #{album}.m3u", 'w') do |out|
       out.puts "#EXTM3U"
