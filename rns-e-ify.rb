@@ -43,22 +43,27 @@ end
 def move_and_shorten_tracks(tracklist, target)
   tracklist.map do |track|
     shorten_track_name(track).tap do |name|
-      #puts "Moved: #{track} to #{File.join(target, name)}"
+      puts "Moved: #{track} to #{File.join(target, name)}"
       FileUtils.mv track, File.join(target, name)
     end
   end
 end
 
 def create_playlist(name, target, tracks)
+  results = []
   move_and_shorten_tracks(tracks, target).tap do |files|
     File.open("#{name}.m3u", 'w') do |out|
       files.each do |track|
+        results << File.join(target, track)
+
         out.puts File.join(target, track)
       end
     end
   end
+  results
 end
 
+all = []
 album_count = 0
 data.each do |album, artists|
   album_target = "a#{album_count+=1}"
@@ -73,8 +78,14 @@ data.each do |album, artists|
       playlist = "#{artists.keys.first} - #{album[0..(55 - artists.keys.first.size)]}"
     end
 
-    create_playlist(playlist, album_target, artists.values.first.sort)
+    all.concat(create_playlist(playlist, album_target, artists.values.first.sort))
   else
-    create_playlist(album, album_target, artists.values.flatten.sort_by {|file| File.split(file).last })
+    all.concat(create_playlist(album, album_target, artists.values.flatten.sort_by {|file| File.split(file).last }))
+  end
+end
+
+File.open("all.m3u", 'w') do |out|
+  all.each do |track|
+    out.puts track
   end
 end
