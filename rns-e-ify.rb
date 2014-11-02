@@ -33,9 +33,12 @@ Dir["#{source}/*"].each do |path|
 end
 
 def shorten_track_name(path, prefix_length = 3)
+  puts "Shortening #{path}"
   filename = File.basename(path)
 
-  num, name = filename.match(/^(\d+) ?(.*)\.mp3/)[1..2]
+  num, name = filename.match(/^(\d+)? ?(.*)\.mp3/)[1..2]
+
+  num = '00' unless num
 
   "#{num} #{name[0..(59 - prefix_length)]}.mp3"
 end
@@ -44,7 +47,12 @@ def move_and_shorten_tracks(tracklist, target)
   tracklist.map do |track|
     shorten_track_name(track).tap do |name|
       puts "Moved: #{track} to #{File.join(target, name)}"
-      FileUtils.mv track, File.join(target, name)
+      
+      if ENV['DEBUG']
+        # noop
+      else
+        FileUtils.mv track, File.join(target, name)
+      end
     end
   end
 end

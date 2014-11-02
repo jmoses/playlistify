@@ -25,6 +25,7 @@ Dir['*'].each do |artist|
   end
 end
 
+all = []
 data.each do |album, artists|
   album = album[0..30].gsub(/(\[\])/, '')
   if artists.size == 1
@@ -32,6 +33,7 @@ data.each do |album, artists|
       out.puts "#EXTM3U"
 
       artists.values.first.sort.each do |track|
+        all << track
         out.puts track
       end
     end
@@ -40,8 +42,16 @@ data.each do |album, artists|
       out.puts "#EXTM3U"
 
       artists.values.flatten.sort_by {|file| File.split(file).last }.each do |track|
+        all << track
         out.puts track
       end
     end
+  end
+end
+
+File.open('all.m3u', 'w') do |out|
+  out.puts '#EXTM3U'
+  all.each do |track|
+    out.puts track
   end
 end
