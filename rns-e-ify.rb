@@ -9,6 +9,7 @@ require 'pathname'
 # * Pathnames no longer than 64 characters (including extension?)
 
 source = ARGV[0]
+mode = ARGV[1] || 'normal'
 
 if source.to_s == ''
   STDERR.puts "SOURCE and TARGET are required"
@@ -78,12 +79,12 @@ data.each do |album, artists|
   FileUtils.mkdir_p(album_target)
 
   if artists.size == 1
-    playlist = "#{artists.keys.first} - #{album}"
+    playlist = "#{artists.keys.first[0..10]}-#{album}"
 
     if playlist.size > 60
       STDERR.puts "#{playlist} too long, shortening"
       
-      playlist = "#{artists.keys.first} - #{album[0..(55 - artists.keys.first.size)]}"
+      playlist = "#{artists.keys.first[0..10]}-#{album[0..(55 - artists.keys.first[0..10].size)]}"
     end
 
     all.concat(create_playlist(playlist, album_target, artists.values.first.sort))
