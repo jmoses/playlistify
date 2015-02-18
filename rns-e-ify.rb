@@ -8,6 +8,8 @@ require 'pathname'
 # * No more than 512 (400?) 'objects' in the filesystem
 # * Pathnames no longer than 64 characters (including extension?)
 
+CHARACTER_REGEX = %r/[^a-zA-Z0-9_\- \.'"]/
+
 source = ARGV[0]
 mode = ARGV[1] || 'normal'
 
@@ -33,11 +35,13 @@ Dir["#{source}/*"].each do |path|
   end
 end
 
+# Also strip 'bad' characters
 def shorten_track_name(path, prefix_length = 3)
   puts "Shortening #{path}"
   filename = File.basename(path)
 
   num, name = filename.match(/^(\d+)? ?(.*)\.mp3/)[1..2]
+  name.gsub!(CHARACTER_REGEX, '')
 
   num = '00' unless num
 
