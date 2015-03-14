@@ -40,7 +40,7 @@ def shorten_track_name(path, prefix_length = 3)
   puts "Shortening #{path}"
   filename = File.basename(path)
 
-  num, name = filename.match(/^(\d+)? ?(.*)\.mp3/)[1..2]
+  num, name = filename.match(/^([\d\-]+)? ?(.*)\.mp3/)[1..2]
   name.gsub!(CHARACTER_REGEX, '')
 
   num = '00' unless num
